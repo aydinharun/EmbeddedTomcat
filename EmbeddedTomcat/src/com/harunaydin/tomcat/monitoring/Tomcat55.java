@@ -29,6 +29,7 @@ public class Tomcat55 {
 	private String contextPath;
 	private String realmType;
 	private String realmDigest;
+	private String address;
 
 	private RealmBase realmBase;
 
@@ -65,7 +66,7 @@ public class Tomcat55 {
 		host = embedded.createHost("localhost", catalinaHome + "/webapps");
 		engine.addChild(host);
 
-		final Context context = embedded.createContext("/embeddedtomcat", contextPath);
+		final Context context = embedded.createContext("/" + address, contextPath);
 
 		context.setReloadable(true);
 		host.addChild(context);
@@ -115,8 +116,8 @@ public class Tomcat55 {
 		embedded.addConnector(httpConnector);
 		// Start the embedded server
 
-		logger.info("\n\nStarting embedded tomcat. Monitoring URL : " + httpConnector.getScheme() + "://" + address.getHostName() + ":" + monitorPort
-				+ "/embeddedtomcat\n\n");
+		logger.info("\n\nStarting embedded tomcat. Monitoring URL : " + httpConnector.getScheme() + "://" + address.getHostName() + ":" + monitorPort + "/"
+				+ address + "\n\n");
 
 		try {
 			embedded.start();
@@ -150,7 +151,7 @@ public class Tomcat55 {
 		useHttps = appProps.getProperty("monitor.use.https", "false").equalsIgnoreCase("true");
 		realmType = appProps.getProperty("monitor.realm.type", "memory").trim();
 		realmDigest = appProps.getProperty("monitor.realm.digest", "").trim();
-
+		address = appProps.getProperty("monitor.web.address", "").trim();
 		final RealmFactory realmFactory = new RealmFactory();
 		realmBase = realmFactory.getRealm(appProps);
 
